@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal & Cute Payment ✨</title>
+
+    <meta property="og:title" content="ชำระเงิน - Fufuuhehee ♡ ✨">
+    <meta property="og:description" content="ช่องทางการชำระเงินสแกนจ่ายง่ายๆ น่ารักมินิมอล 🤍">
+    <meta property="og:image" content="https://i.postimg.cc/Prz4ngCx/1783676787848.jpg">
+    <meta property="og:image:width" content="400">
+    <meta property="og:image:height" content="400">
+    <meta property="og:type" content="website">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&family=Mitr:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* กำหนดให้ใช้ฟอนต์ Mitr และ Itim เป็นหลักในการแสดงผลทั้งหมด */
+        body, input, button, select, textarea, span, p, h1, h2, h3, div {
+            font-family: 'Mitr', 'Itim', sans-serif !important;
+        }
+
+        body {
+            background-color: #FEDBAD; 
+            background-image: radial-gradient(#F4F4F4 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            position: relative;
+            padding-top: 45px;
+            color: #7A6961;
+        }
+        
+        /* อัปเดตความหนาของฟอนต์ให้ล้อไปกับฟอนต์ใหม่ */
+        .font-light { font-family: 'Mitr', sans-serif; font-weight: 200; }
+        .font-normal { font-family: 'Mitr', sans-serif; font-weight: 300; }
+        .font-medium { font-family: 'Mitr', sans-serif; font-weight: 400; }
+        .font-bold { font-family: 'Mitr', sans-serif; font-weight: 500; }
+
+        /* ตัวเลข บัญชีธนาคาร และอินพุต ใช้ฟอนต์ Itim ลายมือน่ารักๆ เพื่อความซอฟต์ */
+        .font-mono, #ktb-num, #feedback-input {
+            font-family: 'Itim', sans-serif !important;
+            letter-spacing: 0.03em;
+        }
+
+        /* เอา Animation ขยับ ดุ๊กดิ๊ก และร่วงหล่นออกทั้งหมด คงเหลือเฉพาะเอฟเฟกต์คลิปป๊อปสปาร์คเกิล */
+        .click-pop-element {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: popEffect 0.8s ease-out forwards;
+        }
+        @keyframes popEffect {
+            0% {
+                transform: translate(-50%, -50%) scale(0.4);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.2) rotate(var(--r));
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-5 antialiased relative overflow-x-hidden">
+
+    <div id="youtube-player" class="hidden"></div>
+
+    <div class="fixed top-4 right-4 z-50">
+        <button id="music-toggle-btn" onclick="toggleMusic()" class="w-9 h-9 bg-white text-[#7A6961] border border-[#FACA89]/40 rounded-full shadow-md flex items-center justify-center transition-all hover:bg-[#fcfcf4] active:scale-90 cursor-pointer text-sm">
+            <i id="music-icon" class="fa-solid fa-music-slash"></i>
+        </button>
+    </div>
+
+    <div class="absolute top-4 left-0 right-0 h-20 pointer-events-none overflow-hidden z-20 flex justify-between px-8">
+        <div class="flex gap-2.5 opacity-90 mt-1.5 transform -rotate-2 text-base">
+            <i class="fa-solid fa-daisy text-[#FACA89]"></i>
+            <i class="fa-solid fa-leaf text-[#C3E57B]"></i>
+            <i class="fa-solid fa-daisy text-[#FAC2DD]"></i>
+            <i class="fa-solid fa-leaf text-white"></i>
+        </div>
+        <div class="text-center mt-2.5 hidden sm:block opacity-90 tracking-widest text-[10px] font-medium bg-white text-[#7A6961] py-1 px-3.5 rounded-full border border-[#FACA89]/50 shadow-sm">
+            <i class="fa-solid fa-sparkles text-[#7A6961] text-[9px] mr-1"></i> Special Order Cafe Studio <i class="fa-solid fa-heart text-[#FAC2DD] text-[9px] ml-1"></i>
+        </div>
+        <div class="flex gap-2.5 opacity-90 mt-1.5 transform rotate-2 text-base">
+            <i class="fa-solid fa-leaf text-white"></i>
+            <i class="fa-solid fa-daisy text-[#FAC2DD]"></i>
+            <i class="fa-solid fa-leaf text-[#C3E57B]"></i>
+            <i class="fa-solid fa-daisy text-[#FACA89]"></i>
+        </div>
+    </div>
+
+    <div class="absolute inset-0 pointer-events-none hidden md:block overflow-hidden">
+        <div class="absolute top-[8%] left-[7%] text-[#7A6961] bg-white py-1.5 px-3 rounded-full shadow-xs flex items-center gap-2 border border-[#FACA89]/40">
+            <i class="fa-solid fa-mug-hot text-[#FACA89] text-xs"></i> <span class="text-[10px] tracking-wider font-medium">Coffee Break</span>
+        </div>
+        <span class="absolute top-[5%] left-[23%] text-[#7A6961] text-2xl"><i class="fa-solid fa-cookie"></i></span>
+        <span class="absolute top-[16%] left-[16%] text-[#FACA89] text-xl"><i class="fa-solid fa-star"></i></span>
+        <span class="absolute top-[24%] left-[6%] text-[#FAC2DD] text-xl"><i class="fa-solid fa-ice-cream"></i></span>
+
+        <span class="absolute bottom-[46%] left-[18%] text-[#7A6961]/70 text-lg"><i class="fa-solid fa-star"></i></span>
+        <span class="absolute bottom-[32%] left-[22%] text-[#FAC2DD] text-3xl"><i class="fa-solid fa-cloud text-orange-50/90"></i></span>
+        <span class="absolute bottom-[16%] left-[8%] text-[#C3E57B] text-2xl"><i class="fa-solid fa-candy-cane"></i></span>
+        <span class="absolute bottom-[42%] left-[5%] text-[#FACA89] text-xl"><i class="fa-solid fa-cake-slice"></i></span>
+
+        <div class="absolute top-[9%] right-[7%] text-[#7A6961] bg-white py-1.5 px-3 rounded-full shadow-xs flex items-center gap-2 border border-[#FACA89]/40">
+            <span class="text-[10px] tracking-wider font-medium">Sweet Dessert</span> <i class="fa-solid fa-heart text-[#FAC2DD] text-xs"></i>
+        </div>
+        <span class="absolute top-[4%] right-[24%] text-[#C3E57B] text-2xl"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+        <span class="absolute top-[17%] right-[17%] text-[#FACA89] text-xl"><i class="fa-solid fa-cookie-bite"></i></span>
+        <span class="absolute top-[26%] right-[5%] text-[#FAC2DD] text-xl"><i class="fa-solid fa-donut"></i></span>
+
+        <span class="absolute bottom-[50%] right-[7%] text-[#7A6961] text-xl"><i class="fa-solid fa-star"></i></span>
+        <span class="absolute bottom-[26%] right-[20%] text-[#FACA89] text-3xl"><i class="fa-solid fa-cloud text-orange-50/90"></i></span>
+        <span class="absolute bottom-[14%] right-[9%] text-[#C3E57B] text-xl"><i class="fa-solid fa-candy-cane"></i></span>
+        <span class="absolute bottom-[38%] right-[4%] text-[#FAC2DD] text-xl"><i class="fa-solid fa-stroopwafel"></i></span>
+    </div>
+
+    <div class="absolute inset-0 pointer-events-none block md:hidden overflow-hidden">
+        <span class="absolute top-[12%] left-[8%] text-[#FACA89] text-base"><i class="fa-solid fa-cookie"></i></span>
+        <span class="absolute bottom-[15%] left-[10%] text-[#FAC2DD] text-sm"><i class="fa-solid fa-star"></i></span>
+        <span class="absolute top-[14%] right-[8%] text-[#C3E57B] text-lg"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+        <span class="absolute bottom-[12%] right-[10%] text-[#FACA89] text-base"><i class="fa-solid fa-cake-slice"></i></span>
+    </div>
+    
+    <div class="w-full max-w-sm my-4 z-10 relative">
+        <div class="bg-white/95 rounded-[2.8rem] shadow-[0_20px_50px_rgba(250,202,221,0.5)] p-7 w-full border-2 border-[#FAC2DD]/40 relative backdrop-blur-xs">
+
+            <div class="flex items-center gap-4 mb-5 bg-[#fcfcf4] p-3.5 rounded-[1.5rem] border border-[#FACA89]/40 relative overflow-hidden">
+                <span class="absolute top-1 right-2 text-[#FAC2DD] text-[11px]"><i class="fa-solid fa-heart"></i></span>
+                <span class="absolute bottom-1 right-8 text-[#FACA89]/70 text-xs"><i class="fa-solid fa-warm-saucer"></i></span>
+
+                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center overflow-hidden border-2 border-[#FACA89]/40 shadow-xs shrink-0">
+                    <img src="https://i.postimg.cc/Prz4ngCx/1783676787848.jpg" alt="Shop Logo" class="w-full h-full object-cover">
+                </div>
+                <div class="leading-tight">
+                    <p class="text-[11px] font-medium text-[#7A6961] tracking-wider uppercase flex items-center gap-0.5">สวัสดีก้าบ</p>
+                    <h1 class="text-base font-bold text-[#7A6961] flex flex-wrap items-center gap-1">
+                        Fufuuhehee ♡ 
+                        <img src="https://i.postimg.cc/L8nypyLn/daisy.png" alt="daisy icon" class="w-4 h-4 object-contain inline-block">
+                        <span>ช่องทางการติดต่อ</span>
+                        <img src="https://i.postimg.cc/xjmJWLXD/mi-m-ch-x-683-20260710164034.png" alt="contact icon" class="w-4 h-4 object-contain inline-block">
+                    </h1>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center mb-6 bg-[#fcfcf4]/60 border border-[#FAC2DD]/30 rounded-[1.8rem] p-4 relative overflow-hidden w-full">
+                <span class="absolute top-2 left-3 text-[#FACA89] text-xs"><i class="fa-solid fa-star"></i></span>
+                <span class="absolute bottom-2 right-3 text-[#C3E57B] text-xs"><i class="fa-solid fa-candy-cane"></i></span>
+
+                <div class="w-full aspect-square bg-white rounded-2xl flex items-center justify-center overflow-hidden border-2 border-[#FACA89]/40 shadow-xs mb-3">
+                    <img id="banner-image" src="https://i.postimg.cc/2SDShv6n/1783670604249.gif" alt="Account Banner" class="w-full h-full object-cover">
+                </div>
+                <button onclick="downloadBanner()" class="text-[11px] font-medium text-[#7A6961] hover:text-white hover:bg-[#C3E57B] flex items-center gap-1 bg-white border border-[#C3E57B]/50 px-3.5 py-1.5 rounded-xl transition-all active:scale-95 cursor-pointer shadow-2xs">
+                    <i class="fa-solid fa-download text-[#7A6961] text-[10px] transition-colors"></i> บันทึกป้ายบัญชีนี้
+                </button>
+            </div>
+            <h2 class="text-center text-xs font-bold text-[#7A6961] tracking-widest uppercase mb-4 flex items-center justify-center gap-2">
+                <span class="text-[#FAC2DD]"><i class="fa-solid fa-heart"></i></span>
+                ช่องทางการชำระเงิน
+                <span class="text-[#FACA89]"><i class="fa-solid fa-star"></i></span>
+            </h2>
+
+            <div class="bg-white rounded-2xl p-4 border border-[#FACA89]/40 mb-4 transition-all hover:border-[#FACA89] hover:shadow-2xs relative overflow-hidden">
+                <span class="absolute top-2 right-3 text-[#FAC2DD]/40 text-[11px]"><i class="fa-solid fa-heart"></i></span>
+
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-7 h-7 bg-[#C3E57B] rounded-lg flex items-center justify-center text-[#7A6961] font-bold text-sm shadow-2xs shrink-0">
+                            K
+                        </div>
+                        <div class="leading-tight">
+                            <p class="text-xs font-bold text-[#7A6961]">ธนาคารกสิกรไทย</p>
+                            <p class="text-[11px] font-medium text-[#7A6961]/60">สุกัญญา สุทิน</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between bg-[#fcfcf4]/50 rounded-xl p-2 pl-3 border border-[#FACA89]/20">
+                    <span id="ktb-num" class="font-mono text-sm font-bold text-[#7A6961] tracking-wider">172-3-25400-7</span>
+                    <button onclick="copyNumber('ktb-num', 'btn-k-text')" class="text-xs font-medium text-[#7A6961] hover:text-white hover:bg-[#FACA89] bg-white border border-[#FACA89]/40 px-3 py-1 rounded-lg transition-all active:scale-95 cursor-pointer">
+                        <span id="btn-k-text">คัดลอก</span>
+                    </button>
+                </div>
+            </div>
+
+            <h2 class="text-center text-xs font-bold text-[#7A6961] tracking-widest uppercase mb-3 flex items-center justify-center gap-2 mt-5">
+                <span class="text-[#FACA89]"><i class="fa-solid fa-comment-heart"></i></span>
+                ช่องทางการติดต่อ
+                <span class="text-[#C3E57B]"><i class="fa-solid fa-sparkles"></i></span>
+            </h2>
+
+            <div class="flex flex-col gap-2 mb-5">
+                <a href="https://lin.ee/WWPFg6z" target="_blank" class="flex items-center justify-center gap-2 py-2.5 px-3 bg-[#fcfcf4] hover:bg-[#C3E57B] border border-[#C3E57B]/40 rounded-xl text-[#7A6961] hover:text-white font-bold text-xs transition-all hover:-translate-y-0.5 active:scale-95 shadow-2xs w-full">
+                    <i class="fa-brands fa-line text-sm text-[#7A6961] hover:text-white"></i> LINE
+                </a>
+                <a href="https://www.facebook.com/share/1DHNwtMDka/?mibextid=wwXIfr" target="_blank" class="flex items-center justify-center gap-2 py-2.5 px-3 bg-[#fcfcf4] hover:bg-[#FAC2DD] border border-[#FAC2DD]/40 rounded-xl text-[#7A6961] hover:text-white font-bold text-xs transition-all hover:-translate-y-0.5 active:scale-95 shadow-2xs w-full">
+                    <i class="fa-brands fa-facebook text-sm text-[#7A6961] hover:text-white"></i> Facebook
+                </a>
+            </div>
+
+            <div class="bg-[#fcfcf4]/40 rounded-2xl p-3.5 mb-5 border border-[#FACA89]/40 relative overflow-hidden">
+                <span class="absolute -bottom-1 left-2 text-[#FAC2DD]/40 text-[11px]"><i class="fa-solid fa-heart"></i></span>
+                <span class="absolute -top-1 right-3 text-[#C3E57B]/40 text-[11px]"><i class="fa-solid fa-candy-cane"></i></span>
+
+                <p class="text-[11px] font-medium text-[#7A6961]/80 leading-relaxed text-center relative z-10">
+                    ขอบคุณ k.ลูกค้าที่มาอุดหนุนร้านเค้านะคะ ขอบคุณมากๆค่ะ 🩷
+                </p>
+            </div>
+
+            <div class="bg-[#fcfcf4] rounded-2xl p-4 border border-[#FACA89]/40 mb-2 relative overflow-hidden transition-all focus-within:border-[#FACA89]">
+                <h3 class="text-xs font-bold text-[#7A6961] mb-2 flex items-center gap-1">
+                    <i class="fa-solid fa-comment-dots text-[#7A6961]"></i> ฝากคำติชมถึงแม่ค้าได้นะคะ ♡
+                </h3>
+                <textarea id="feedback-input" placeholder="พิมพ์ข้อความตรงนี้ได้เลยนะคะ..." rows="3" 
+                          class="w-full p-3 bg-white border border-[#FACA89]/30 rounded-xl focus:outline-none focus:border-[#FACA89] text-xs font-medium text-[#7A6961] placeholder:text-[#7A6961]/40 resize-none transition-all shadow-2xs"></textarea>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        let player = null;
+        let isMusicPlaying = false;
+        const videoId = '75-Com9Bo_s';
+
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                videoId: videoId,
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'loop': 1,
+                    'playlist': videoId,
+                    'modestbranding': 1,
+                    'rel': 0,
+                    'showinfo': 0
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.setVolume(45);
+        }
+
+        function toggleMusic() {
+            const btn = document.getElementById('music-toggle-btn');
+            const icon = document.getElementById('music-icon');
+
+            if (!player) return;
+
+            if (!isMusicPlaying) {
+                player.playVideo();
+                isMusicPlaying = true;
+                icon.className = 'fa-solid fa-music';
+            } else {
+                player.pauseVideo();
+                isMusicPlaying = false;
+                icon.className = 'fa-solid fa-music-slash';
+            }
+        }
+
+        document.addEventListener('click', function startOnFirstClick() {
+            if (!isMusicPlaying && player) {
+                toggleMusic();
+                document.removeEventListener('click', startOnFirstClick);
+            }
+        }, { once: true });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.closest('button') || e.target.closest('a')) {
+                createCuteShower(e.clientX, e.clientY, 4);
+                return;
+            }
+            createCuteShower(e.clientX, e.clientY, 8);
+        });
+
+        function createCuteShower(pageX, pageY, count) {
+            const icons = ['fa-heart', 'fa-cookie', 'fa-mug-hot', 'fa-sparkles', 'fa-ice-cream', 'fa-donut', 'fa-music', 'fa-eighth-note'];
+            
+            for (let i = 0; i < count; i++) {
+                const element = document.createElement('i');
+                const chosenIcon = icons[Math.floor(Math.random() * icons.length)];
+                
+                if (chosenIcon === 'fa-heart') {
+                    element.className = 'fa-solid fa-heart click-pop-element';
+                } else if (chosenIcon === 'fa-cookie') {
+                    element.className = 'fa-solid fa-cookie click-pop-element';
+                } else if (chosenIcon === 'fa-mug-hot') {
+                    element.className = 'fa-solid fa-mug-hot click-pop-element';
+                } else if (chosenIcon === 'fa-ice-cream') {
+                    element.className = 'fa-solid fa-ice-cream click-pop-element';
+                } else if (chosenIcon === 'fa-donut') {
+                    element.className = 'fa-solid fa-donut click-pop-element';
+                } else if (chosenIcon === 'fa-music') {
+                    element.className = 'fa-solid fa-music click-pop-element';
+                } else if (chosenIcon === 'fa-eighth-note') {
+                    element.className = 'fa-solid fa-eighth-note click-pop-element';
+                } else {
+                    element.className = 'fa-solid fa-wand-magic-sparkles click-pop-element';
+                }
+
+                element.style.color = '#7A6961';
+                element.style.fontSize = (Math.random() * 12 + 8) + 'px';
+                element.style.left = pageX + 'px';
+                element.style.top = pageY + 'px';
+
+                const moveX = (Math.random() - 0.5) * 170;
+                const moveY = (Math.random() - 0.5) * 170 - 40;
+                const rotate = (Math.random() - 0.5) * 360;
+
+                element.style.setProperty('--x', moveX + 'px');
+                element.style.setProperty('--y', moveY + 'px');
+                element.style.setProperty('--r', rotate + 'deg');
+
+                document.body.appendChild(element);
+
+                setTimeout(() => {
+                    element.remove();
+                }, 800);
+            }
+        }
+
+        function copyNumber(elementId, textId) {
+            const numText = document.getElementById(elementId).innerText.replace(/-/g, '');
+
+            navigator.clipboard.writeText(numText).then(() => {
+                const copyText = document.getElementById(textId);
+                const oldText = copyText.innerText;
+
+                copyText.innerText = "คัดลอกแล้ว";
+                copyText.style.color = "#7A6961";
+                copyText.style.backgroundColor = "#FACA89";
+
+                setTimeout(() => {
+                    copyText.innerText = oldText;
+                    copyText.style.color = "";
+                    copyText.style.backgroundColor = "";
+                }, 2000);
+            }).catch(err => {
+                alert('กรุณาเลือกคัดลอกด้วยตัวเองนะคะ');
+            });
+        }
+
+        async function saveImageFromUrl(imageUrl, defaultName, buttonElement) {
+            const originalText = buttonElement ? buttonElement.innerHTML : null;
+            if (buttonElement) {
+                buttonElement.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> กำลังบันทึก...`;
+                buttonElement.disabled = true;
+            }
+
+            try {
+                const response = await fetch(imageUrl);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const blob = await response.blob();
+                
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    const dataUrl = reader.result;
+                    const link = document.createElement('a');
+                    link.href = dataUrl;
+                    link.download = defaultName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    if (buttonElement) {
+                        buttonElement.innerHTML = originalText;
+                        buttonElement.disabled = false;
+                    }
+                };
+                reader.readAsDataURL(blob);
+
+            } catch (error) {
+                window.open(imageUrl, '_blank');
+                if (buttonElement) {
+                    buttonElement.innerHTML = originalText;
+                    buttonElement.disabled = false;
+                }
+            }
+        }
+
+        function downloadBanner() {
+            const bannerImg = document.getElementById('banner-image');
+            const btn = document.querySelector('button[onclick="downloadBanner()"]');
+            saveImageFromUrl(bannerImg.src, 'shop-account-banner.png', btn);
+        }
+    </script>
+</body>
+</html>
